@@ -15,7 +15,7 @@
     <groupId>com.ignaciorudyk.auth</groupId>
     <artifactId>ignaciorudyk-starter-auth</artifactId>
     <version>1.0.0</version>
-    <name>auth-service</name>
+    <name>ignaciorudyk-starter-auth</name>
     <description>JWT Authentication with Spring Security</description>
 
     <properties>

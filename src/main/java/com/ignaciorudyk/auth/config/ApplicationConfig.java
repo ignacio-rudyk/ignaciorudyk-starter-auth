@@ -26,7 +26,7 @@ public class ApplicationConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(10);   // Strength 10: balance seguridad/velocidad
+        return new BCryptPasswordEncoder(10);// Strength 10: balance seguridad/velocidad
     }
 
 }

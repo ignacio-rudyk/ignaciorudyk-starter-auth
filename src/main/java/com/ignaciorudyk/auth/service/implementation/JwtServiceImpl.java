@@ -1,32 +1,37 @@
 package com.ignaciorudyk.auth.service.implementation;
 
+import com.ignaciorudyk.auth.config.StarterAuthentitcationProperties;
+import com.ignaciorudyk.auth.repository.RefreshTokenRepository;
+import com.ignaciorudyk.auth.repository.model.RefreshToken;
+import com.ignaciorudyk.auth.repository.model.User;
 import com.ignaciorudyk.auth.service.JwtService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Function;
 
 @Service
 @Slf4j
 public class JwtServiceImpl implements JwtService {
 
-    private final String secretKey;
+    private final RefreshTokenRepository refreshTokenRepository;
 
-    private final long accessTokenExpiration;
+    private final StarterAuthentitcationProperties starterAuthentitcationProperties;
 
-    public JwtServiceImpl(@Value("${jwt.secret}") String secretKey,
-                          @Value("${jwt.access-token-expiration}") long accessTokenExpiration) {
-        this.secretKey = secretKey;
-        this.accessTokenExpiration = accessTokenExpiration;
+
+    public JwtServiceImpl(RefreshTokenRepository refreshTokenRepository, StarterAuthentitcationProperties starterAuthentitcationProperties) {
+        this.refreshTokenRepository = refreshTokenRepository;
+        this.starterAuthentitcationProperties = starterAuthentitcationProperties;
     }
 
     @Override
@@ -40,18 +45,7 @@ public class JwtServiceImpl implements JwtService {
                 .stream().findFirst()
                 .map(Object::toString)
                 .orElse("ROLE_USER"));
-        return buildToken(extraClaims, userDetails, accessTokenExpiration);
-    }
-
-    @Override
-    public boolean isTokenValid(String token, UserDetails userDetails) {
-        try {
-            final String username = extractUsername(token);
-            return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
-        } catch (JwtException e) {
-            log.warn("Token JWT inválido: {}", e.getMessage());
-            return false;
-        }
+        return buildToken(extraClaims, userDetails, starterAuthentitcationProperties.getAccessTokenExpiration());
     }
 
     @Override
@@ -77,7 +71,19 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public long getAccessTokenExpiration() {
-        return accessTokenExpiration;
+        return starterAuthentitcationProperties.getAccessTokenExpiration();
+    }
+
+    @Override
+    public String createRefreshToken(User user) {
+        String token = UUID.randomUUID().toString();
+        RefreshToken refreshToken = RefreshToken.builder()
+                .token(token)
+                .user(user)
+                .expiresAt(LocalDateTime.now().plusSeconds(starterAuthentitcationProperties.getRefreshTokenExpiration() / 1000))
+                .build();
+        refreshTokenRepository.save(refreshToken);
+        return token;
     }
 
     private Claims extractAllClaims(String token) {
@@ -89,7 +95,7 @@ public class JwtServiceImpl implements JwtService {
     }
 
     private SecretKey getSigningKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+        byte[] keyBytes = Decoders.BASE64.decode(starterAuthentitcationProperties.getSecretKey());
         return Keys.hmacShaKeyFor(keyBytes);
     }
 

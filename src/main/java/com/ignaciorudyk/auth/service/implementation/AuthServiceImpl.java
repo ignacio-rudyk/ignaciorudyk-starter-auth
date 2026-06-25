@@ -12,14 +12,10 @@ import com.ignaciorudyk.auth.service.AuthService;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -34,22 +30,18 @@ public class AuthServiceImpl implements AuthService {
 
     private final AuthenticationManager authenticationManager;
 
-    private final long refreshTokenExpiration;
-
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthServiceImpl.class);
 
     public AuthServiceImpl(UserRepository userRepository,
                            RefreshTokenRepository refreshTokenRepository,
                            JwtServiceImpl jwtServiceImpl,
                            PasswordEncoder passwordEncoder,
-                           AuthenticationManager authenticationManager,
-                           @Value("${jwt.refresh-token-expiration}") long refreshTokenExpiration) {
+                           AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
         this.refreshTokenRepository = refreshTokenRepository;
         this.jwtServiceImpl = jwtServiceImpl;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
-        this.refreshTokenExpiration = refreshTokenExpiration;
     }
 
     @Override
@@ -90,7 +82,6 @@ public class AuthServiceImpl implements AuthService {
                 .findByToken(request.refreshToken())
                 .orElseThrow(() -> new InvalidTokenException("Refresh token no encontrado"));
         if (!storedToken.isValid()) {
-            // Si el token fue robado y alguien intentó usarlo después de revocar, limpiar todo
             refreshTokenRepository.revokeAllUserTokens(storedToken.getUser());
             throw new InvalidTokenException("Refresh token inválido o expirado. Iniciá sesión nuevamente.");
         }
@@ -115,7 +106,7 @@ public class AuthServiceImpl implements AuthService {
 
     private AuthResponseDTO buildAuthResponse(User user) {
         String accessToken = jwtServiceImpl.generateAccessToken(user);
-        String refreshToken = createRefreshToken(user);
+        String refreshToken = jwtServiceImpl.createRefreshToken(user);
         UserInfoDTO userInfo = new UserInfoDTO(
                 user.getId(),
                 user.getEmail(),
@@ -124,17 +115,6 @@ public class AuthServiceImpl implements AuthService {
                 user.getRole().name()
         );
         return AuthResponseDTO.of(accessToken, refreshToken, jwtServiceImpl.getAccessTokenExpiration(), userInfo);
-    }
-
-    private String createRefreshToken(User user) {
-        String token = UUID.randomUUID().toString();
-        RefreshToken refreshToken = RefreshToken.builder()
-                .token(token)
-                .user(user)
-                .expiresAt(LocalDateTime.now().plusSeconds(refreshTokenExpiration / 1000))
-                .build();
-        refreshTokenRepository.save(refreshToken);
-        return token;
     }
 
 }
