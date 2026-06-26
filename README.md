@@ -86,6 +86,26 @@ Copiar `.env.example` como `.env` y ajustar:
 cp .env.example .env
 ```
 
+### Propiedades configurables
+
+| Propiedad                                            | Descripción                                                                          | Obligatorio |
+|------------------------------------------------------|--------------------------------------------------------------------------------------|-------------|
+| ignaciorudyk.authentication.enabled                  | Habilita o deshabilita la dependencia (por defecto es true).                         | No          |
+| ignaciorudyk.authentication.secret-key               | Secret key.                                                                          | Sí          |
+| ignaciorudyk.authentication.access-token-expiration  | Define el access token expiration en MS.                                             | No          |
+| ignaciorudyk.authentication.refresh-token-expiration | Define el refresh token expiration en MS.                                            | No          |
+| spring.datasource.url                                | Url de la base de datos del consumidor de la dependencia.                            | Sí          |
+| spring.datasource.username                           | Usuario de la base de datos.                                                         | Sí          |
+| spring.datasource.password                           | Contraseña de la base de datos.                                                      | Sí          |
+| spring.datasource.driver-class-name                  | Indica qué driver JDBC debe utilizar Spring para conectarse a la base de datos.      | Sí          |
+| spring.jpa.properties.hibernate.dialect              | Indica qué tipo de SQL generar para la base de datos.                                | Sí          |
+| spring.flyway.enabled                                | Habilita o deshabilita la dependencia de Flyway.                                     | No          |
+| spring.flyway.locations                              | Indica la ruta dónde debe buscar Flyway los scripts SQL de migración.                | Sí          |
+| spring.flyway.baseline-on-migrate                    | Toma la instancia de la base de datos que fue creada sin flayway como punto inicial. | No          |
+| springdoc.api-docs.path                              | Cambia la URL donde Springdoc expone el documento OpenAPI en formato JSON.           | No          |
+| springdoc.swagger-ui.path                            | Permite cambiar la URL donde se muestra la interfaz de Swagger UI.                   | No          |
+| springdoc.swagger-ui.tags-sorter                     | Define cómo se ordenan los tags en Swagger UI.                                       | No          |
+
 ## Tests
 
 ```bash
