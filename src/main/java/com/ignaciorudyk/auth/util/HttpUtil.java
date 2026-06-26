@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.Collection;
 import java.util.List;
 
 public class HttpUtil {
@@ -18,6 +19,17 @@ public class HttpUtil {
         error.setMsg("Operacion completada");
         ResponseDTO response = new ResponseDTO(metadata, data, List.of(error));
         return ResponseEntity.ok(response);
+    }
+
+    public static ResponseEntity<ResponseDTO> isBadRequestResponse(HttpServletRequest httpRequest, Collection<String> messages) {
+        return isFailureRequestResponse(httpRequest, messages, HttpStatus.BAD_REQUEST);
+    }
+
+    public static ResponseEntity<ResponseDTO> isFailureRequestResponse(HttpServletRequest httpRequest, Collection<String> messages, HttpStatus httpStatus) {
+        MetadataDTO metadata = new MetadataDTO(httpRequest.getRequestURI(), httpRequest.getMethod(), httpStatus.value());
+        List<ErrorDTO> errors = messages.stream().map(e -> new ErrorDTO(-1, e)).toList();
+        ResponseDTO response = new ResponseDTO(metadata, null, errors);
+        return ResponseEntity.status(httpStatus).body(response);
     }
 
 }
