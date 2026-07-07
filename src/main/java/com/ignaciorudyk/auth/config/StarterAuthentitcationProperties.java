@@ -14,6 +14,10 @@ public class StarterAuthentitcationProperties {
     private long accessTokenExpiration;
     private long refreshTokenExpiration;
 
+    private List<String> publicEndpoints = new ArrayList<>();
+    private List<String> userEndpoints = new ArrayList<>();
+    private List<String> adminEndpoints = new ArrayList<>();
+
     private List<String> allowedOrigins = new ArrayList<>();
     private List<String> allowedMethods = new ArrayList<>();
     private List<String> allowedHeaders = new ArrayList<>();

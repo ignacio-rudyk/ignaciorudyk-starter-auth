@@ -86,7 +86,7 @@ Copiar `.env.example` como `.env` y ajustar:
 cp .env.example .env
 ```
 
-### Propiedades configurables
+### Propiedades configurables en el proyecto consumidor
 
 | Propiedad                                            | Descripción                                                                          | Obligatorio |
 |------------------------------------------------------|--------------------------------------------------------------------------------------|-------------|

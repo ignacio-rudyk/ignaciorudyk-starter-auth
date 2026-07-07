@@ -2,9 +2,13 @@ package com.ignaciorudyk.auth.service.implementation;
 
 import com.ignaciorudyk.auth.exception.EmailAlreadyExistsException;
 import com.ignaciorudyk.auth.exception.InvalidTokenException;
+import com.ignaciorudyk.auth.mapper.UserMapper;
 import com.ignaciorudyk.auth.repository.RefreshTokenRepository;
 import com.ignaciorudyk.auth.repository.UserRepository;
-import com.ignaciorudyk.auth.repository.dto.*;
+import com.ignaciorudyk.auth.repository.dto.request.LoginRequestDTO;
+import com.ignaciorudyk.auth.repository.dto.request.RefreshTokenRequestDTO;
+import com.ignaciorudyk.auth.repository.dto.request.RegisterRequestDTO;
+import com.ignaciorudyk.auth.repository.dto.response.AuthResponseDTO;
 import com.ignaciorudyk.auth.repository.model.RefreshToken;
 import com.ignaciorudyk.auth.repository.model.Role;
 import com.ignaciorudyk.auth.repository.model.User;
@@ -30,18 +34,21 @@ public class AuthServiceImpl implements AuthService {
 
     private final AuthenticationManager authenticationManager;
 
+    private final UserMapper userMapper;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthServiceImpl.class);
 
     public AuthServiceImpl(UserRepository userRepository,
                            RefreshTokenRepository refreshTokenRepository,
                            JwtServiceImpl jwtServiceImpl,
                            PasswordEncoder passwordEncoder,
-                           AuthenticationManager authenticationManager) {
+                           AuthenticationManager authenticationManager, UserMapper userMapper) {
         this.userRepository = userRepository;
         this.refreshTokenRepository = refreshTokenRepository;
         this.jwtServiceImpl = jwtServiceImpl;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
+        this.userMapper = userMapper;
     }
 
     @Override
@@ -85,7 +92,6 @@ public class AuthServiceImpl implements AuthService {
             refreshTokenRepository.revokeAllUserTokens(storedToken.getUser());
             throw new InvalidTokenException("Refresh token inválido o expirado. Iniciá sesión nuevamente.");
         }
-        // Rotación: revocar el token viejo
         storedToken.setRevoked(true);
         refreshTokenRepository.save(storedToken);
         User user = storedToken.getUser();
@@ -106,15 +112,8 @@ public class AuthServiceImpl implements AuthService {
 
     private AuthResponseDTO buildAuthResponse(User user) {
         String accessToken = jwtServiceImpl.generateAccessToken(user);
-        String refreshToken = jwtServiceImpl.createRefreshToken(user);
-        UserInfoDTO userInfo = new UserInfoDTO(
-                user.getId(),
-                user.getEmail(),
-                user.getFirstName(),
-                user.getLastName(),
-                user.getRole().name()
-        );
-        return AuthResponseDTO.of(accessToken, refreshToken, jwtServiceImpl.getAccessTokenExpiration(), userInfo);
+        String refreshToken = jwtServiceImpl.generateRefreshToken(user);
+        return AuthResponseDTO.of(accessToken, refreshToken, jwtServiceImpl.getAccessTokenExpiration(), userMapper.toDTO(user));
     }
 
 }

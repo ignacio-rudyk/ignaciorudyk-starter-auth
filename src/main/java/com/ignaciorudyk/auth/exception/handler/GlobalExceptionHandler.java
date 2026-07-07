@@ -2,8 +2,9 @@ package com.ignaciorudyk.auth.exception.handler;
 
 import com.ignaciorudyk.auth.exception.EmailAlreadyExistsException;
 import com.ignaciorudyk.auth.exception.InvalidTokenException;
-import com.ignaciorudyk.auth.repository.dto.response.ResponseDTO;
+import com.ignaciorudyk.auth.repository.dto.response.base.ResponseDTO;
 import com.ignaciorudyk.auth.util.HttpUtil;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ResponseDTO> handleValidationErrors(MethodArgumentNotValidException ex, HttpServletRequest request) {
+        System.out.println("ENTRALE");
         List<String> messages = ex.getBindingResult().getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList();
         return HttpUtil.isBadRequestResponse(request, messages);
     }
@@ -57,6 +59,14 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InvalidTokenException.class)
     public ResponseEntity<ResponseDTO> handleInvalidToken(InvalidTokenException ex, HttpServletRequest request) {
         return HttpUtil.isFailureRequestResponse(request, List.of(ex.getMessage()), HttpStatus.UNAUTHORIZED);
+    }
+
+    /**
+     * Token inválido o expirado
+     */
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ResponseDTO> handleEntityNotFound(EntityNotFoundException ex, HttpServletRequest request) {
+        return HttpUtil.isFailureRequestResponse(request, List.of(ex.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 }

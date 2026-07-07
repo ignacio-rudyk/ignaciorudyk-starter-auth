@@ -23,7 +23,7 @@ public class OpenApiConfig {
         return new OpenAPI()
                 .info(new Info()
                         .title("Spring Security Login API")
-                        .description("JWT Authentication con Spring Security 6 — Portfolio Project")
+                        .description("JWT Authentication con Spring Security 6")
                         .version("1.0.0")
                         .contact(new Contact()
                                 .name("Portfolio")

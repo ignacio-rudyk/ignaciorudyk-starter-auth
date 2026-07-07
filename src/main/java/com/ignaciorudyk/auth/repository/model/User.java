@@ -26,7 +26,7 @@ public class User implements UserDetails {
     @Column(nullable = false, unique = true, length = 100)
     private String email;
 
-    @Column(nullable = false, length = 60)  // BCrypt produce hashes de hasta 60 chars
+    @Column(nullable = false, length = 60)
     private String password;
 
     @Column(name = "first_name", nullable = false, length = 50)

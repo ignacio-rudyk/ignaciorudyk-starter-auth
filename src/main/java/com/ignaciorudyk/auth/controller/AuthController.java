@@ -1,9 +1,9 @@
 package com.ignaciorudyk.auth.controller;
 
-import com.ignaciorudyk.auth.repository.dto.LoginRequestDTO;
-import com.ignaciorudyk.auth.repository.dto.RefreshTokenRequestDTO;
-import com.ignaciorudyk.auth.repository.dto.RegisterRequestDTO;
-import com.ignaciorudyk.auth.repository.dto.response.ResponseDTO;
+import com.ignaciorudyk.auth.repository.dto.request.LoginRequestDTO;
+import com.ignaciorudyk.auth.repository.dto.request.RefreshTokenRequestDTO;
+import com.ignaciorudyk.auth.repository.dto.request.RegisterRequestDTO;
+import com.ignaciorudyk.auth.repository.dto.response.base.ResponseDTO;
 import com.ignaciorudyk.auth.service.AuthService;
 import com.ignaciorudyk.auth.util.HttpUtil;
 import io.swagger.v3.oas.annotations.Operation;

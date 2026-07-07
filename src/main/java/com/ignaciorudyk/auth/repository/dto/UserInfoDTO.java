@@ -6,4 +6,4 @@ public record UserInfoDTO(
         String firstName,
         String lastName,
         String role
-) {}
+) { }

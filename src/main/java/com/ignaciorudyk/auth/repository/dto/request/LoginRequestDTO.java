@@ -1,4 +1,4 @@
-package com.ignaciorudyk.auth.repository.dto;
+package com.ignaciorudyk.auth.repository.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

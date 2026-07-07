@@ -1,1 +1,3 @@
 com.ignaciorudyk.auth.autoconfigure.AuthAutoConfiguration
+com.ignaciorudyk.auth.config.security.SecurityAutoConfiguration
+com.ignaciorudyk.auth.config.security.SecurityFilterChainAutoConfiguration

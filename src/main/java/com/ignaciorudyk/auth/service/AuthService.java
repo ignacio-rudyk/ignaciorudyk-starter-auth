@@ -1,9 +1,9 @@
 package com.ignaciorudyk.auth.service;
 
-import com.ignaciorudyk.auth.repository.dto.AuthResponseDTO;
-import com.ignaciorudyk.auth.repository.dto.LoginRequestDTO;
-import com.ignaciorudyk.auth.repository.dto.RefreshTokenRequestDTO;
-import com.ignaciorudyk.auth.repository.dto.RegisterRequestDTO;
+import com.ignaciorudyk.auth.repository.dto.request.LoginRequestDTO;
+import com.ignaciorudyk.auth.repository.dto.request.RefreshTokenRequestDTO;
+import com.ignaciorudyk.auth.repository.dto.request.RegisterRequestDTO;
+import com.ignaciorudyk.auth.repository.dto.response.AuthResponseDTO;
 
 public interface AuthService {
 

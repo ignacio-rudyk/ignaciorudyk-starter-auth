@@ -1,4 +1,6 @@
-package com.ignaciorudyk.auth.repository.dto;
+package com.ignaciorudyk.auth.repository.dto.response;
+
+import com.ignaciorudyk.auth.repository.dto.UserInfoDTO;
 
 public record AuthResponseDTO(
         String accessToken,

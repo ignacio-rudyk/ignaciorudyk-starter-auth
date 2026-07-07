@@ -6,7 +6,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -16,7 +15,6 @@ import java.util.Map;
  * Devuelve 401 con JSON cuando llega un request sin token o con token inválido
  * a un endpoint protegido. Sin esto, Spring redirige al form de login (HTML).
  */
-@Component
 public class JwtAuthEntryPointHandler implements AuthenticationEntryPoint {
 
     private final ObjectMapper objectMapper = new ObjectMapper().findAndRegisterModules();

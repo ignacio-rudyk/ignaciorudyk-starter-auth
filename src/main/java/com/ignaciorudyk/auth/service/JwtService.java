@@ -1,5 +1,6 @@
 package com.ignaciorudyk.auth.service;
 
+import com.ignaciorudyk.auth.repository.dto.UserInfoDTO;
 import com.ignaciorudyk.auth.repository.model.User;
 import io.jsonwebtoken.Claims;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,7 +15,11 @@ public interface JwtService {
 
     String generateAccessToken(Map<String, Object> extraClaims, UserDetails userDetails);
 
+    String generateRefreshToken(User user);
+
     boolean isTokenExpired(String token);
+
+    boolean isTokenValid(String token);
 
     String extractUsername(String token);
 
@@ -22,8 +27,8 @@ public interface JwtService {
 
     <T> T extractClaim(String token, Function<Claims, T> claimsResolver);
 
-    long getAccessTokenExpiration();
+    UserInfoDTO extractClaims(String token);
 
-    String createRefreshToken(User user);
+    long getAccessTokenExpiration();
 
 }

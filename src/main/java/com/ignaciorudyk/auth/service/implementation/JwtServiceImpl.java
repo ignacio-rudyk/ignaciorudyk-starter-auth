@@ -2,10 +2,13 @@ package com.ignaciorudyk.auth.service.implementation;
 
 import com.ignaciorudyk.auth.config.StarterAuthentitcationProperties;
 import com.ignaciorudyk.auth.repository.RefreshTokenRepository;
+import com.ignaciorudyk.auth.repository.dto.UserInfoDTO;
 import com.ignaciorudyk.auth.repository.model.RefreshToken;
 import com.ignaciorudyk.auth.repository.model.User;
 import com.ignaciorudyk.auth.service.JwtService;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
@@ -41,16 +44,44 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public String generateAccessToken(Map<String, Object> extraClaims, UserDetails userDetails) {
+        User user = (User) userDetails;
+        extraClaims.put("userId", user.getId());
+        extraClaims.put("firstName", user.getFirstName());
+        extraClaims.put("lastName", user.getLastName());
         extraClaims.put("role", userDetails.getAuthorities()
                 .stream().findFirst()
                 .map(Object::toString)
                 .orElse("ROLE_USER"));
-        return buildToken(extraClaims, userDetails, starterAuthentitcationProperties.getAccessTokenExpiration());
+        return buildToken(extraClaims, userDetails,
+                starterAuthentitcationProperties.getAccessTokenExpiration());
+    }
+
+    @Override
+    public String generateRefreshToken(User user) {
+        String token = UUID.randomUUID().toString();
+        RefreshToken refreshToken = RefreshToken.builder()
+                .token(token)
+                .user(user)
+                .expiresAt(LocalDateTime.now().plusSeconds(starterAuthentitcationProperties.getRefreshTokenExpiration() / 1000))
+                .build();
+        refreshTokenRepository.save(refreshToken);
+        return token;
     }
 
     @Override
     public boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
+    }
+
+    @Override
+    public boolean isTokenValid(String token) {
+        try {
+            extractAllClaims(token);
+            return true;
+        } catch (JwtException e) {
+            log.warn("Token JWT inválido: {}", e.getMessage());
+            return false;
+        }
     }
 
     @Override
@@ -70,20 +101,20 @@ public class JwtServiceImpl implements JwtService {
     }
 
     @Override
-    public long getAccessTokenExpiration() {
-        return starterAuthentitcationProperties.getAccessTokenExpiration();
+    public UserInfoDTO extractClaims(String token) {
+        Claims claims = extractAllClaims(token);
+        return new UserInfoDTO(
+                claims.get("userId", Long.class),
+                claims.getSubject(),
+                claims.get("firstName", String.class),
+                claims.get("lastName", String.class),
+                claims.get("role", String.class)
+        );
     }
 
     @Override
-    public String createRefreshToken(User user) {
-        String token = UUID.randomUUID().toString();
-        RefreshToken refreshToken = RefreshToken.builder()
-                .token(token)
-                .user(user)
-                .expiresAt(LocalDateTime.now().plusSeconds(starterAuthentitcationProperties.getRefreshTokenExpiration() / 1000))
-                .build();
-        refreshTokenRepository.save(refreshToken);
-        return token;
+    public long getAccessTokenExpiration() {
+        return starterAuthentitcationProperties.getAccessTokenExpiration();
     }
 
     private Claims extractAllClaims(String token) {

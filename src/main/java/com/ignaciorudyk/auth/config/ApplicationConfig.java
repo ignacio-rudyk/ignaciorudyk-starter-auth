@@ -1,6 +1,7 @@
 package com.ignaciorudyk.auth.config;
 
 import com.ignaciorudyk.auth.repository.UserRepository;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -18,6 +19,7 @@ public class ApplicationConfig {
     }
 
     @Bean
+    @ConditionalOnMissingBean
     public UserDetailsService userDetailsService() {
         return username -> userRepository.findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException(
@@ -25,8 +27,9 @@ public class ApplicationConfig {
     }
 
     @Bean
+    @ConditionalOnMissingBean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(10);// Strength 10: balance seguridad/velocidad
+        return new BCryptPasswordEncoder(10);
     }
 
 }
