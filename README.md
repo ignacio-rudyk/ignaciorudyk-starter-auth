@@ -62,9 +62,31 @@ Cliente                API
 ## Cómo correr localmente
 
 ### Requisitos
-Tener instalado JDK 21.
+Tener instalado JDK 21, GIT y Maven.
+
+Descargar el proyecto:
+
+`git clone https://github.com/ignacio-rudyk/ignaciorudyk-starter-auth`
+
+En una terminal dirigirse a la raiz del proyecto e instalar la dependencia en el repositorio local:
+
+`mvn clean install`
+
+Luego crear un proyecto Spring Boot que será el consumidor de la dependencia. 
+
+En el nuevo proyecto agregar la siguiente dependencia al pom.xml:
+
+```
+<dependency>
+    <groupId>com.ignaciorudyk.auth</groupId>
+    <artifactId>ignaciorudyk-starter-auth</artifactId>
+    <version>1.0.0</version>
+</dependency>
+```
 
 ### Propiedades configurables en el proyecto consumidor
+
+En el archivo application.properties agregue si es necesario las siguientes properties:
 
 | Propiedad                                            | Descripción                                                                                  | Obligatorio |
 |------------------------------------------------------|----------------------------------------------------------------------------------------------|-------------|
@@ -97,7 +119,13 @@ Para algunas de las propiedades anteriores configurar las siguientes variables d
 └── JWT_REFRESH_TOKEN_EXPIRATION -> ignaciorudyk.authentication.refresh-token-expiration
 ```
 
-En una terminal dirigirse a la carpeta `target` del proyecto y ejecutar el comando `mvn spring-boot:run`.
+En una terminal dirigirse a la carpeta raiz del proyecto consumidor y ejecutar:
+
+`mvn clean package`
+
+Luego dirigirse a la carpeta `target` y ejecutar el .jar contenido con el siguiente comando:
+
+`java -jar mi-app.jar`.
 
 La API queda disponible en `http://localhost:8080`  
 Swagger UI: `http://localhost:8080/swagger-ui.html`
