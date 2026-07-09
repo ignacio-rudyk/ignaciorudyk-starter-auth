@@ -209,8 +209,6 @@ src/main/
     │   └── spring/
     │       └── org.springframework.boot.autoconfigure.AutoConfiguration.imports
     └── application.properties
-xml
-ME.md
 ```
 
 ## Decisiones de diseño
