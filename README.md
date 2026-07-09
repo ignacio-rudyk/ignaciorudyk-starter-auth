@@ -217,7 +217,7 @@ src/main/
 Los Access Tokens se validan sin consultar la DB en cada request. Escala horizontalmente sin necesidad de sesiones compartidas (Redis, etc.).
 
 **¿Por qué Refresh Token en DB?**  
-Permite logout real y rotación. Un Access Token expirado es inútil; un Refresh Token revocado no puede obtener nuevos tokens.
+Permite logout real y rotación. Un Access Token expirado no sirve; un Refresh Token revocado no puede obtener nuevos tokens.
 
 **¿Por qué Flyway?**  
 Los cambios de schema son código, están versionados, y son reproducibles en cualquier entorno.
