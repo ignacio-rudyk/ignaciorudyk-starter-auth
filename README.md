@@ -105,6 +105,13 @@ En el archivo application.properties agregue si es necesario las siguientes prop
 | springdoc.api-docs.path                              | Cambia la URL donde Springdoc expone el documento OpenAPI en formato JSON.                   | No          |
 | springdoc.swagger-ui.path                            | Permite cambiar la URL donde se muestra la interfaz de Swagger UI.                           | No          |
 | springdoc.swagger-ui.tags-sorter                     | Define cómo se ordenan los tags en Swagger UI.                                               | No          |
+| ignaciorudyk.authentication.public-endpoints[index]  | Configure un metodo público. Ej: ...public-method[0]=/login                                  | No          |
+| ignaciorudyk.authentication.user-endpoints[index]    | Configure un metodo con rol de user. Ej: ...authentication.user-method[0]=/user/**           | No          |
+| ignaciorudyk.authentication.admin-endpoints[index]   | Configure un metodo con rol de admin. Ej: ...authentication.admin-method[0]=/user/**         | No          |
+| ignaciorudyk.authentication.allowed-origins[index]   | Configure qué dominios pueden consumir tu API.                                               | No          |
+| ignaciorudyk.authentication.allowed-methods[index]   | Configure qué métodos HTTP están permitidos desde otros orígenes.                            | No          |
+| ignaciorudyk.authentication.allowed-headers[index]   | Configure qué encabezados (headers) puede enviar el navegador al backend.                    | No          |
+| ignaciorudyk.authentication.exposed-headers[index]   | Configure qué headers de la respuesta el navegador puede leer desde JavaScript.              | No          |
 
 Para algunas de las propiedades anteriores configurar las siguientes variables de entorno:
 

@@ -79,10 +79,7 @@ public class SecurityFilterChainAutoConfiguration {
                 )
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-        customizer.ifAvailable(c -> {
-            try { c.customize(http); }
-            catch (Exception e) { throw new RuntimeException(e); }
-        });
+        setCustomizer(http, customizer);
         return http.build();
     }
 
@@ -129,6 +126,14 @@ public class SecurityFilterChainAutoConfiguration {
     private String[] getAdminEndpoints() {
         starterAuthentitcationProperties.getAdminEndpoints().addAll(List.of(INTERNAL_ADMIN_ENDPOINTS));
         return starterAuthentitcationProperties.getAdminEndpoints().toArray(String[]::new);
+    }
+
+
+    private static void setCustomizer(HttpSecurity http, ObjectProvider<SecurityCustomizer> customizer) {
+        customizer.ifAvailable(c -> {
+            try { c.customize(http); }
+            catch (Exception e) { throw new RuntimeException(e); }
+        });
     }
 
 }
