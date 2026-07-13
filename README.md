@@ -62,7 +62,7 @@ Cliente                API
 ## Cómo correr localmente
 
 ### Requisitos
-Tener instalado JDK 21, GIT y Maven.
+Tener instalado JDK 21, GIT, Maven y Postgres.
 
 Descargar el proyecto:
 
@@ -83,6 +83,12 @@ En el nuevo proyecto agregar la siguiente dependencia al pom.xml:
     <version>1.0.0</version>
 </dependency>
 ```
+
+Crear una base de datos en Postgres para utilizar en el proyecto.
+
+## Configuración
+
+El starter permite definir los endpoints y sus reglas de acceso desde la configuración de la aplicación.
 
 ### Propiedades configurables en el proyecto consumidor
 
