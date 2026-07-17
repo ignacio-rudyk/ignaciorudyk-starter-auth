@@ -148,7 +148,7 @@ src/main/
 │       │   │   ├── SecurityCustomizer.java
 │       │   │   └── SecurityFilterChainAutoConfiguration.java
 │       │   ├── ApplicationConfig.java
-│       │   ├── CustomRole
+│       │   ├── CustomRole.java
 │       │   ├── JwtAuthenticationFilter.java
 │       │   ├── OpenApiConfig.java
 │       │   └── StarterAuthenticationProperties.java
