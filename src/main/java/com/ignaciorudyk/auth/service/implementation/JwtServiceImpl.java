@@ -1,6 +1,6 @@
 package com.ignaciorudyk.auth.service.implementation;
 
-import com.ignaciorudyk.auth.config.StarterAuthentitcationProperties;
+import com.ignaciorudyk.auth.config.StarterAuthenticationProperties;
 import com.ignaciorudyk.auth.repository.RefreshTokenRepository;
 import com.ignaciorudyk.auth.repository.dto.UserInfoDTO;
 import com.ignaciorudyk.auth.repository.model.RefreshToken;
@@ -29,12 +29,12 @@ public class JwtServiceImpl implements JwtService {
 
     private final RefreshTokenRepository refreshTokenRepository;
 
-    private final StarterAuthentitcationProperties starterAuthentitcationProperties;
+    private final StarterAuthenticationProperties starterAuthenticationProperties;
 
 
-    public JwtServiceImpl(RefreshTokenRepository refreshTokenRepository, StarterAuthentitcationProperties starterAuthentitcationProperties) {
+    public JwtServiceImpl(RefreshTokenRepository refreshTokenRepository, StarterAuthenticationProperties starterAuthenticationProperties) {
         this.refreshTokenRepository = refreshTokenRepository;
-        this.starterAuthentitcationProperties = starterAuthentitcationProperties;
+        this.starterAuthenticationProperties = starterAuthenticationProperties;
     }
 
     @Override
@@ -53,7 +53,7 @@ public class JwtServiceImpl implements JwtService {
                 .map(Object::toString)
                 .orElse("ROLE_USER"));
         return buildToken(extraClaims, userDetails,
-                starterAuthentitcationProperties.getAccessTokenExpiration());
+                starterAuthenticationProperties.accessTokenExpiration());
     }
 
     @Override
@@ -62,7 +62,7 @@ public class JwtServiceImpl implements JwtService {
         RefreshToken refreshToken = RefreshToken.builder()
                 .token(token)
                 .user(user)
-                .expiresAt(LocalDateTime.now().plusSeconds(starterAuthentitcationProperties.getRefreshTokenExpiration() / 1000))
+                .expiresAt(LocalDateTime.now().plusSeconds(starterAuthenticationProperties.refreshTokenExpiration() / 1000))
                 .build();
         refreshTokenRepository.save(refreshToken);
         return token;
@@ -114,7 +114,7 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public long getAccessTokenExpiration() {
-        return starterAuthentitcationProperties.getAccessTokenExpiration();
+        return starterAuthenticationProperties.accessTokenExpiration();
     }
 
     private Claims extractAllClaims(String token) {
@@ -126,7 +126,7 @@ public class JwtServiceImpl implements JwtService {
     }
 
     private SecretKey getSigningKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(starterAuthentitcationProperties.getSecretKey());
+        byte[] keyBytes = Decoders.BASE64.decode(starterAuthenticationProperties.secretKey());
         return Keys.hmacShaKeyFor(keyBytes);
     }
 

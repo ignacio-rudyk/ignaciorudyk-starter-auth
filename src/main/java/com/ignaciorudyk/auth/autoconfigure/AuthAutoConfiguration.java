@@ -1,6 +1,6 @@
 package com.ignaciorudyk.auth.autoconfigure;
 
-import com.ignaciorudyk.auth.config.StarterAuthentitcationProperties;
+import com.ignaciorudyk.auth.config.StarterAuthenticationProperties;
 import com.ignaciorudyk.auth.config.security.SecurityAutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -26,5 +26,5 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 )
 @EnableJpaRepositories("com.ignaciorudyk.auth.repository")
 @EntityScan("com.ignaciorudyk.auth.repository.model")
-@EnableConfigurationProperties(StarterAuthentitcationProperties.class)
+@EnableConfigurationProperties(StarterAuthenticationProperties.class)
 public class AuthAutoConfiguration {}

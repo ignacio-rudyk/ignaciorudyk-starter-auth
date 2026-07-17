@@ -1,7 +1,8 @@
 package com.ignaciorudyk.auth.config.security;
 
+import com.ignaciorudyk.auth.config.CustomRole;
 import com.ignaciorudyk.auth.config.JwtAuthenticationFilter;
-import com.ignaciorudyk.auth.config.StarterAuthentitcationProperties;
+import com.ignaciorudyk.auth.config.StarterAuthenticationProperties;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -23,7 +24,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.List;
+import java.util.Arrays;
 
 @AutoConfiguration(after = SecurityAutoConfiguration.class)
 public class SecurityFilterChainAutoConfiguration {
@@ -32,7 +33,7 @@ public class SecurityFilterChainAutoConfiguration {
     private final AccessDeniedHandler accessDeniedHandler;
     private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
-    private final StarterAuthentitcationProperties starterAuthentitcationProperties;
+    private final StarterAuthenticationProperties starterAuthenticationProperties;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     private static final String[] INTERNAL_PUBLIC_ENDPOINTS = {
@@ -48,16 +49,17 @@ public class SecurityFilterChainAutoConfiguration {
     private static final String[] INTERNAL_ADMIN_ENDPOINTS = {"/users/admin/**"};
 
     public SecurityFilterChainAutoConfiguration(AuthenticationEntryPoint authenticationEntryPoint,
-                                     AccessDeniedHandler accessDeniedHandler,
-                                     UserDetailsService userDetailsService,
-                                     PasswordEncoder passwordEncoder,
-                                     StarterAuthentitcationProperties starterAuthentitcationProperties, JwtAuthenticationFilter jwtAuthenticationFilter) {
+                                                AccessDeniedHandler accessDeniedHandler,
+                                                UserDetailsService userDetailsService,
+                                                PasswordEncoder passwordEncoder,
+                                                StarterAuthenticationProperties starterAuthenticationProperties, JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.authenticationEntryPoint = authenticationEntryPoint;
         this.accessDeniedHandler = accessDeniedHandler;
         this.userDetailsService = userDetailsService;
         this.passwordEncoder = passwordEncoder;
-        this.starterAuthentitcationProperties = starterAuthentitcationProperties;
+        this.starterAuthenticationProperties = starterAuthenticationProperties;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        addDefaultEndpoints();
     }
 
     @Bean
@@ -67,18 +69,13 @@ public class SecurityFilterChainAutoConfiguration {
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(getPublicEndpoints()).permitAll()
-                        .requestMatchers(getUserEndpoints()).hasRole("USER")
-                        .requestMatchers(getAdminEndpoints()).hasRole("ADMIN")
-                        .anyRequest().authenticated()
-                )
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint(authenticationEntryPoint)
                         .accessDeniedHandler(accessDeniedHandler)
                 )
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        setCustomAuthorizeHttpRequest(http);
         setCustomizer(http, customizer);
         return http.build();
     }
@@ -102,10 +99,10 @@ public class SecurityFilterChainAutoConfiguration {
     @ConditionalOnMissingBean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(starterAuthentitcationProperties.getAllowedOrigins());
-        config.setAllowedMethods(starterAuthentitcationProperties.getAllowedMethods());
-        config.setAllowedHeaders(starterAuthentitcationProperties.getAllowedHeaders());
-        config.setExposedHeaders(starterAuthentitcationProperties.getExposedHeaders());
+        config.setAllowedOrigins(starterAuthenticationProperties.allowedOrigins());
+        config.setAllowedMethods(starterAuthenticationProperties.allowedMethods());
+        config.setAllowedHeaders(starterAuthenticationProperties.allowedHeaders());
+        config.setExposedHeaders(starterAuthenticationProperties.exposedHeaders());
         config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -113,21 +110,22 @@ public class SecurityFilterChainAutoConfiguration {
         return source;
     }
 
-    private String[] getPublicEndpoints() {
-        starterAuthentitcationProperties.getPublicEndpoints().addAll(List.of(INTERNAL_PUBLIC_ENDPOINTS));
-        return starterAuthentitcationProperties.getPublicEndpoints().toArray(String[]::new);
+    private void addDefaultEndpoints() {
+        starterAuthenticationProperties.addCustomRole(new CustomRole("PERMIT_ALL", Arrays.asList(INTERNAL_PUBLIC_ENDPOINTS)));
+        starterAuthenticationProperties.addCustomRole(new CustomRole("ROLE_USER", Arrays.asList(INTERNAL_USER_ENDPOINTS)));
+        starterAuthenticationProperties.addCustomRole(new CustomRole("ROLE_ADMIN", Arrays.asList(INTERNAL_ADMIN_ENDPOINTS)));
     }
 
-    private String[] getUserEndpoints() {
-        starterAuthentitcationProperties.getUserEndpoints().addAll(List.of(INTERNAL_USER_ENDPOINTS));
-        return starterAuthentitcationProperties.getUserEndpoints().toArray(String[]::new);
+    private void setCustomAuthorizeHttpRequest(HttpSecurity http) throws Exception {
+        http.authorizeHttpRequests(auth -> starterAuthenticationProperties.customRoles()
+                .forEach(e -> {
+                    if("PERMIT_ALL".equalsIgnoreCase(e.roleName()))
+                        auth.requestMatchers(e.endpoints().toArray(String[]::new)).permitAll();
+                    else
+                        auth.requestMatchers(e.endpoints().toArray(String[]::new)).hasAuthority(e.roleName().toUpperCase());
+                })
+        );
     }
-
-    private String[] getAdminEndpoints() {
-        starterAuthentitcationProperties.getAdminEndpoints().addAll(List.of(INTERNAL_ADMIN_ENDPOINTS));
-        return starterAuthentitcationProperties.getAdminEndpoints().toArray(String[]::new);
-    }
-
 
     private static void setCustomizer(HttpSecurity http, ObjectProvider<SecurityCustomizer> customizer) {
         customizer.ifAvailable(c -> {

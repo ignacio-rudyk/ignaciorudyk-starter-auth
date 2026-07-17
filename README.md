@@ -90,34 +90,37 @@ Crear una base de datos en Postgres para utilizar en el proyecto.
 
 El starter permite definir los endpoints y sus reglas de acceso desde la configuración de la aplicación.
 
+### Ejemplo de configuracion de roles y endpoints
+
+![Swagger UI](docs/images/paths-example.png)
+
 ### Propiedades configurables en el proyecto consumidor
 
 En el archivo application.properties agregue si es necesario las siguientes properties:
 
-| Propiedad                                            | Descripción                                                                                  | Obligatorio |
-|------------------------------------------------------|----------------------------------------------------------------------------------------------|-------------|
-| ignaciorudyk.authentication.enabled                  | Habilita o deshabilita la dependencia (por defecto es true).                                 | No          |
-| ignaciorudyk.authentication.secret-key               | Establece un secret key.                                                                     | Sí          |
-| ignaciorudyk.authentication.access-token-expiration  | Establece el access token expiration en MS.                                                  | No          |
-| ignaciorudyk.authentication.refresh-token-expiration | Establece el refresh token expiration en MS.                                                 | No          |
-| spring.datasource.url                                | Establece la url de la base de datos.                                                        | Sí          |
-| spring.datasource.username                           | Establece el usuario de la base de datos.                                                    | Sí          |
-| spring.datasource.password                           | Establece la contraseña de la base de datos.                                                 | Sí          |
-| spring.datasource.driver-class-name                  | Establece driver JDBC .                                                                      | Sí          |
-| spring.jpa.properties.hibernate.dialect              | Establece qué tipo de SQL generar para la base de datos.                                     | Sí          |
-| spring.flyway.enabled                                | Habilita o deshabilita la dependencia de Flyway.                                             | No          |
-| spring.flyway.locations                              | Establece la ruta dónde debe buscar Flyway los scripts SQL de migración.                     | Sí          |
-| spring.flyway.baseline-on-migrate                    | Toma la instancia de la base de datos que fue creada sin flyway como punto inicial.(boolean) | No          |
-| springdoc.api-docs.path                              | Cambia la URL donde Springdoc expone el documento OpenAPI en formato JSON.                   | No          |
-| springdoc.swagger-ui.path                            | Permite cambiar la URL donde se muestra la interfaz de Swagger UI.                           | No          |
-| springdoc.swagger-ui.tags-sorter                     | Define cómo se ordenan los tags en Swagger UI.                                               | No          |
-| ignaciorudyk.authentication.public-endpoints[index]  | Configure un metodo público. Ej: ...public-method[0]=/login                                  | No          |
-| ignaciorudyk.authentication.user-endpoints[index]    | Configure un metodo con rol de user. Ej: ...authentication.user-method[0]=/user/**           | No          |
-| ignaciorudyk.authentication.admin-endpoints[index]   | Configure un metodo con rol de admin. Ej: ...authentication.admin-method[0]=/user/**         | No          |
-| ignaciorudyk.authentication.allowed-origins[index]   | Configure qué dominios pueden consumir tu API.                                               | No          |
-| ignaciorudyk.authentication.allowed-methods[index]   | Configure qué métodos HTTP están permitidos desde otros orígenes.                            | No          |
-| ignaciorudyk.authentication.allowed-headers[index]   | Configure qué encabezados (headers) puede enviar el navegador al backend.                    | No          |
-| ignaciorudyk.authentication.exposed-headers[index]   | Configure qué headers de la respuesta el navegador puede leer desde JavaScript.              | No          |
+| Propiedad                                                        | Descripción                                                                                  | Obligatorio |
+|------------------------------------------------------------------|----------------------------------------------------------------------------------------------|-------------|
+| ignaciorudyk.authentication.enabled                              | Habilita o deshabilita la dependencia (por defecto es true).                                 | No          |
+| ignaciorudyk.authentication.secret-key                           | Establece un secret key.                                                                     | Sí          |
+| ignaciorudyk.authentication.access-token-expiration              | Establece el access token expiration en MS.                                                  | No          |
+| ignaciorudyk.authentication.refresh-token-expiration             | Establece el refresh token expiration en MS.                                                 | No          |
+| spring.datasource.url                                            | Establece la url de la base de datos.                                                        | Sí          |
+| spring.datasource.username                                       | Establece el usuario de la base de datos.                                                    | Sí          |
+| spring.datasource.password                                       | Establece la contraseña de la base de datos.                                                 | Sí          |
+| spring.datasource.driver-class-name                              | Establece driver JDBC .                                                                      | Sí          |
+| spring.jpa.properties.hibernate.dialect                          | Establece qué tipo de SQL generar para la base de datos.                                     | Sí          |
+| spring.flyway.enabled                                            | Habilita o deshabilita la dependencia de Flyway.                                             | No          |
+| spring.flyway.locations                                          | Establece la ruta dónde debe buscar Flyway los scripts SQL de migración.                     | Sí          |
+| spring.flyway.baseline-on-migrate                                | Toma la instancia de la base de datos que fue creada sin flyway como punto inicial.(boolean) | No          |
+| springdoc.api-docs.path                                          | Cambia la URL donde Springdoc expone el documento OpenAPI en formato JSON.                   | No          |
+| springdoc.swagger-ui.path                                        | Permite cambiar la URL donde se muestra la interfaz de Swagger UI.                           | No          |
+| springdoc.swagger-ui.tags-sorter                                 | Define cómo se ordenan los tags en Swagger UI.                                               | No          |
+| ignaciorudyk.authentication.custom-roles[index].role-name        | Configure un endpoint.                                                                       | No          |
+| ignaciorudyk.authentication.custom-roles[index].endpoints[index] | Configure una ruta.                                                                          | No          |
+| ignaciorudyk.authentication.allowed-origins[index]               | Configure qué dominios pueden consumir tu API.                                               | No          |
+| ignaciorudyk.authentication.allowed-methods[index]               | Configure qué métodos HTTP están permitidos desde otros orígenes.                            | No          |
+| ignaciorudyk.authentication.allowed-headers[index]               | Configure qué encabezados (headers) puede enviar el navegador al backend.                    | No          |
+| ignaciorudyk.authentication.exposed-headers[index]               | Configure qué headers de la respuesta el navegador puede leer desde JavaScript.              | No          |
 
 Para algunas de las propiedades anteriores configurar las siguientes variables de entorno:
 
